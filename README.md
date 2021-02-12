@@ -25,6 +25,10 @@ git remote add upstream git@github.com:openai/gym.git
 git remote set-url --push upstream no_push
 ```
 
+# New Environments
+
+- Carrot pushing environment. `gym.make('Carrot-v0')`
+
 # Dependencies 
 - `pyglet`
 - `pymunk`
