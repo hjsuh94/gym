@@ -9,6 +9,12 @@ register(
     max_episode_steps=30,
 )
 
+register(
+    id="PendulumPixel-v0",
+    entry_point='gym.envs.robot_locomotion_group:PendulumPixelEnv',
+    max_episode_steps=200,
+)
+
 # Algorithmic
 # ----------------------------------------
 
