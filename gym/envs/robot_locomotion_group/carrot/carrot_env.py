@@ -36,7 +36,7 @@ class CarrotEnv(gym.Env):
         return image_transform(self.sim.get_current_image())
 
     def render(self, mode='human'):
-        return image_transform(self.sim.get_current_image)
+        return image_transform(self.sim.get_current_image())
 
     def close(self):
         pass
