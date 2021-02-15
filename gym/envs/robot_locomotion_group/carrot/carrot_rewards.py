@@ -1,26 +1,22 @@
 import numpy as np
-
-import torch
-from torchvision import transforms
 from PIL import Image
 import cv2
 
-def image_to_tensor(image_cv2):
+def image_transform(image_cv2):
     """
-    Convert cv2 image of HxW into a torch representation of 1 x 1 x H x W. 
+    Convert input image to downsampled binary version.
+    input: cv2 image (np.array), shape (500, 500, 3)
+    output: cv2 image (np.array), shape (32, 32)
     """
-    image_transform = transforms.Compose([
-        transforms.Grayscale(),
-        transforms.Resize((32, 32)),
-        transforms.ToTensor(),
-    ])
-    # 1. cv2 to PIL 
-    image = Image.fromarray(image_cv2)
-    # 2. PIL to tensor.
-    image = image_transform(image)
-    # 3. tensor to batch tensor 
-    image = torch.unsqueeze(image, 0)
-    return image 
+    # 1. Convert image to grayscale.
+    image_cv2_grayscale = cv2.cvtColor(image_cv2, cv2.COLOR_BGR2GRAY)
+    # 2. Resize. Uses bilinear interpolation by default.
+    image_cv2_resized = cv2.resize(image_cv2_grayscale, (32, 32), cv2.INTER_LINEAR)
+    # 3. Threshold image to 0-1.
+    _, image_cv2_threshold = cv2.threshold(image_cv2_resized, 0, 255, cv2.THRESH_BINARY)
+    # 4. Normalize image between 0~1.
+    image_normalized = image_cv2_threshold / 255.
+    return image_normalized
 
 def lyapunov_measure():
     """
@@ -34,11 +30,14 @@ def lyapunov_measure():
             measure[i,j] = np.maximum(radius - pixel_radius, 0)
     return measure
 
-def lyapunov(image_cv2):
+def lyapunov(image_normalized):
     """
-    Apply the lyapunov measure to the image. Expects (B x 1 x 32 x 32), output B vector.
+    Apply the lyapunov measure to the image. 
+    input: cv2 image (np.array), shape (32, 32)
+    output: (np.float), shape ()
     """
-    image_tensor = image_to_tensor(image_cv2)
-    V_measure = torch.Tensor(lyapunov_measure())
-    torch_lyapunov = torch.sum(torch.mul(image_tensor, V_measure), [2,3])
-    return torch_lyapunov.numpy().squeeze()
+    V_measure = lyapunov_measure()
+    # element-wise multiplication.
+    V = np.sum(np.multiply(image_normalized, V_measure))
+    image_sum = np.sum(image_normalized)
+    return V / image_sum

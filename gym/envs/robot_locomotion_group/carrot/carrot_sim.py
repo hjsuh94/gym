@@ -37,8 +37,8 @@ class CarrotSim(pyglet.window.Window):
 
         self.global_time = 0.0
         self.onion_pieces = []
-        self.onion_num = 200
-        self.onion_size = 10
+        self.onion_num = 120
+        self.onion_size = 12
 
         self.space = pymunk.Space()
 
