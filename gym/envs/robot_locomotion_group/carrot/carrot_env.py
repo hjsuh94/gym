@@ -24,23 +24,19 @@ class CarrotEnv(gym.Env):
         )
 
     def step(self, action):
-        current_image = self.sim.get_current_image()
-        reward = lyapunov(image_transform(current_image))
+        current_image = image_transform(self.sim.get_current_image())
+        reward = lyapunov(current_image)
         self.sim.update(action)
-        next_image = self.sim.get_current_image()
-        next_image = image_transform(next_image)
-
-        print(reward)
+        next_image = image_transform(self.sim.get_current_image())
 
         return next_image, reward, False, {}
 
     def reset(self):
         self.sim.refresh()
-        current_image = self.sim.get_current_image()
-        return image_transform(current_image)
+        return image_transform(self.sim.get_current_image())
 
     def render(self, mode='human'):
-        self.sim.get_current_image()
+        return image_transform(self.sim.get_current_image)
 
     def close(self):
         pass
