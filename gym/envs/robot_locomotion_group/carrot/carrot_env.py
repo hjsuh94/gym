@@ -28,15 +28,15 @@ class CarrotEnv(gym.Env):
         reward = lyapunov(current_image)
         self.sim.update(action)
         next_image = image_transform(self.sim.get_current_image())
-
-        return next_image, reward, False, {}
+        # We'll return the actual image here instead of the normalized one.
+        return 255.0 * next_image, reward, False, {}
 
     def reset(self):
         self.sim.refresh()
-        return image_transform(self.sim.get_current_image())
+        return 255.0 * image_transform(self.sim.get_current_image())
 
     def render(self, mode='human'):
-        return image_transform(self.sim.get_current_image())
+        return 255.0 * image_transform(self.sim.get_current_image())
 
     def close(self):
         pass
